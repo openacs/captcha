@@ -103,7 +103,7 @@ ad_proc -private captcha::image::generate__tclgd {
     # overlapping with the others.
     set width [expr {int(max($width, $n_chars * $height * pow(2, -2)))}]
 
-    set font "[acs_root_dir]/packages/acs-templating/resources/fonts/LiberationSans-Regular.ttf"
+    set font "[acs_root_dir]/packages/captcha/resources/fonts/LiberationSans-Regular.ttf"
 
     # Rule of thumb to calculate the font size
     set font_size [expr {($height / 500.0) * 300.0}]
@@ -354,7 +354,7 @@ ad_proc -public template::data::validate::captcha {
     }
 
     if {!$valid_p} {
-        set message [_ acs-templating.Your_captcha_is_invalid]
+        set message [_ captcha.Your_captcha_is_invalid]
     }
 
     return $valid_p

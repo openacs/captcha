@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<message_catalog package_key="captcha" locale="de_DE" charset="ISO-8859-1">
+  <msg key="Please_enter_the_captcha">Bitte geben Sie die im Captcha angezeigten Buchstaben und Zahlen ein</msg>
+  <msg key="Your_captcha_is_invalid">Ungültiges Captcha</msg>
+</message_catalog>

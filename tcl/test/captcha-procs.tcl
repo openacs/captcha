@@ -7,7 +7,6 @@ ad_library {
 aa_register_case -cats {
     api
     smoke
-    stress
 } -procs {
     template::widget::captcha
     template::data::validate::captcha
@@ -15,7 +14,7 @@ aa_register_case -cats {
     Test the captcha widget API
 } {
     try {
-        set endpoint_name /acs-templating-test-captcha-widget
+        set endpoint_name /captcha-test-captcha-widget
         ns_register_proc GET $endpoint_name {
             array set element {
                 mode edit
