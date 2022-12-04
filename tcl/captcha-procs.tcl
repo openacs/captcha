@@ -359,4 +359,3 @@ ad_proc -public template::data::validate::captcha {
 
     return $valid_p
 }
-
