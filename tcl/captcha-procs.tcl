@@ -29,10 +29,6 @@ ad_proc -private captcha::image::generate__convert {
                 RGB 6 characters code.
 
     @see https://imagemagick.org/script/convert.php
-
-    @return a dict of fields 'path' (path to the image), 'text' (the
-            text the image represents) and checksum (a checksum for
-            the image to use for matching).
 } {
     set amplitude [expr {round($height * 0.25)}]
     set wavelength [expr {round($width * 0.75)}]
@@ -84,10 +80,6 @@ ad_proc -private captcha::image::generate__tclgd {
                 RGB 6 characters code.
 
     @see https://flightaware.github.io/tcl.gd/
-
-    @return a dict of fields 'path' (path to the image), 'text' (the
-            text the image represents) and checksum (a checksum for
-            the image to use for matching).
 } {
     # Convert the rgb colors
     for {set i 1} {$i <= 5} {incr i 2} {
