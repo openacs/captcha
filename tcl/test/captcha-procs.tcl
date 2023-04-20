@@ -5,6 +5,21 @@ ad_library {
 }
 
 aa_register_case -cats {
+    smoke production_safe
+} -procs {
+    util::which
+} captcha_exec_dependencies {
+    Test external command dependencies for this package.
+} {
+    foreach cmd [list \
+                     [::util::which convert] \
+                     [::util::which tesseract] \
+                    ] {
+        aa_true "'$cmd' is executable" [file executable $cmd]
+    }
+}
+
+aa_register_case -cats {
     api
     smoke
 } -procs {
