@@ -17,7 +17,7 @@ ad_proc -private captcha::image::generate__convert {
 } {
     Creates capcha image from a text. This is the implementation using
     the popular convert command via exec. It will render the letters,
-    then perturbate them with a wave of random length and amplitude.
+    then perturb them with a wave of random length and amplitude.
 
     @param height in pixels
     @param width in pixels
