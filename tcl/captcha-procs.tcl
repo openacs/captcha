@@ -143,6 +143,35 @@ ad_proc -private captcha::image::generate__tclgd {
     close $wfd
 }
 
+ad_proc -private captcha::backend {} {
+    @return the captcha backend used to generate the image
+} {
+    set backend [::parameter::get_global_value \
+                     -package_key captcha \
+                     -parameter backend \
+                     -default tclgd]
+    if {$backend eq "tclgd"} {
+        try {
+            package require tclgd
+        } on error {errmsg} {
+            ad_log warning \
+                "Cannot load tclgd library:" \
+                $errmsg \
+                "Falling back to convert implementation."
+            set backend "convert"
+        }
+    }
+
+    if {$backend eq "convert"} {
+        set convert [::util::which convert]
+        if {$convert eq ""} {
+            error {'tclgd' or 'convert' command not available.}
+        }
+    }
+
+    return $backend
+}
+
 ad_proc -private captcha::image::generate {
     {-size 150x50}
     -text
@@ -163,17 +192,7 @@ ad_proc -private captcha::image::generate {
             text the image represents) and checksum (a checksum for
             the image to use for matching).
 } {
-    try {
-        package require tclgd
-    } on error {errmsg} {
-        set convert [::util::which convert]
-        if {$convert eq ""} {
-            error {'tclgd' or 'convert' command not available.}
-        }
-        set backend convert
-    } on ok {d} {
-        set backend tclgd
-    }
+    set backend [::captcha::backend]
 
     if {![regexp -nocase {^(\d+)x(\d+)$} $size m width height]} {
         error {Invalid size}
