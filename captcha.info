@@ -9,29 +9,26 @@
     <implements-subsite-p>f</implements-subsite-p>
     <inherit-templates-p>f</inherit-templates-p>
 
-    <version name="0.3.0" url="http://openacs.org/repository/download/apm/captcha-0.3.0apm">
+    <version name="1.0.0" url="http://openacs.org/repository/download/apm/captcha-1.0.0apm">
         <owner url="mailto:antonio@elettrotecnica.it">Antonio Pisano</owner>
         <summary>A captcha implementation for the template system</summary>
-        <release-date>2022-06-26</release-date>
+        <release-date>2024-01-29</release-date>
         <vendor>WU Vienna</vendor>
-        <description format="text/html">This package requires
-        ImageMagic (convert), and a working installation of
-        fontconfig, and tesseract and/or the tclgd package.
-
-        Currently, the package (at least the reqression test) does not
-        work on macOS</description>
+        <description format="text/html">
+          This captcha is implemented by generating a random string,
+          which is then converted to a corresponding ASCII art. It is
+          the approach used by the Fossil Tcl website at
+          https://fossil-scm.org/ and the ASCII art itself was taken
+          directly from there.
+        </description>
         <maturity>0</maturity>
 
-        <provides url="captcha" version="0.3.0"/>
+        <provides url="captcha" version="1.0.0"/>
         <requires url="acs-templating" version="5.10.1b1"/>
 
         <callbacks>
         </callbacks>
         <parameters>
-            <parameter scope="global" datatype="string"  min_n_values="1"  max_n_values="1"  name="backend"  default="convert" description="Decide the preferred implementation to use when generating the captcha. There are 2 options:
-
- 1) &#34;tclgd&#34;: more performant, but needs to be installed on the machine
- 2) &#34;convert&#34;: uses the widespread convert tool via exec"/>
         </parameters>
 
     </version>

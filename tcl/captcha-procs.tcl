@@ -7,216 +7,365 @@ ad_library {
 namespace eval captcha {}
 namespace eval captcha::image {}
 
-ad_proc -private captcha::image::generate__convert {
-    -height:required
-    -width:required
-    -text
-    {-background "#ffffff"}
-    {-fill "#000000"}
-    -path:required
+ad_proc -private captcha::image::text_to_ascii_art {
+    -text:required
+    {-render_type ""}
 } {
-    Creates capcha image from a text. This is the implementation using
-    the popular convert command via exec. It will render the letters,
-    then perturb them with a wave of random length and amplitude.
+    Convert a text into ASCII art
 
-    @param height in pixels
-    @param width in pixels
-    @param text the text to use for the captcha. When unspecified, a
-                random text will be used. The text can only contain
-                alphanumeric characters and spaces.
-    @param background the background color, as RGB 6 characters code.
-    @param fill the font color, background the background color, as
-                RGB 6 characters code.
+    The art itself has been copied from the Fossil implementation.
 
-    @see https://imagemagick.org/script/convert.php
+    @see https://fossil-scm.org/home/file?name=src/captcha.c
 } {
-    set amplitude [expr {round($height * 0.25)}]
-    set wavelength [expr {round($width * 0.75)}]
-    set offset [expr {round($width * rand())}]
+    set ascii_variants \
+        [dict create \
+             0 \
+             [dict create \
+                  0 \
+                  [list \
+                       "  __  " \
+                       " /  \\ " \
+                       "| () |" \
+                       " \\__/ " \
+                      ] \
+                  1 \
+                  [list \
+                       " _ " \
+                       "/ |" \
+                       "| |" \
+                       "|_|" \
+                      ] \
+                  2 \
+                  [list \
+                       " ___ " \
+                       "|_  )" \
+                       " / / " \
+                       "/___|" \
+                      ] \
+                  3 \
+                  [list \
+                       " ____" \
+                       "|__ /" \
+                       " |_ \\" \
+                       "|___/" \
+                      ] \
+                  4 \
+                  [list \
+                       " _ _  " \
+                       "| | | " \
+                       "|_  _|" \
+                       "  |_| " \
+                      ] \
+                  5 \
+                  [list \
+                       " ___ " \
+                       "| __|" \
+                       "|__ \\" \
+                       "|___/" \
+                      ] \
+                  6 \
+                  [list \
+                       "  __ " \
+                       " / / " \
+                       "/ _ \\" \
+                       "\\___/"\
+                      ] \
+                  7 \
+                  [list \
+                       " ____ " \
+                       "|__  |" \
+                       "  / / " \
+                       " /_/  " \
+                      ] \
+                  8 \
+                  [list \
+                       " ___ " \
+                       "( _ )" \
+                       "/ _ \\" \
+                       "\\___/" \
+                      ] \
+                  9 \
+                  [list \
+                       " ___ " \
+                       "/ _ \\" \
+                       "\\_ \ /" \
+                       " /_/ " \
+                      ] \
+                  A \
+                  [list \
+                       "      " \
+                       "  /\\  " \
+                       " /  \\ " \
+                       "/_/\\_\\" \
+                      ] \
+                  B \
+                  [list \
+                       " ___ " \
+                       "| _ )" \
+                       "| _ \\" \
+                       "|___/" \
+                      ] \
+                  C \
+                  [list \
+                       "  ___ " \
+                       " / __|" \
+                       "| (__ " \
+                       " \\___|" \
+                      ] \
+                  D \
+                  [list \
+                       " ___  " \
+                       "|   \\ " \
+                       "| |) |" \
+                       "|___/ " \
+                      ] \
+                  E \
+                  [list \
+                       " ___ " \
+                       "| __|" \
+                       "| _| " \
+                       "|___|" \
+                      ] \
+                  F \
+                  [list \
+                       " ___ " \
+                       "| __|" \
+                       "| _| " \
+                       "|_|  " \
+                      ]
+             ]\
+             1 \
+             [dict create \
+                  0 \
+                  [list \
+                       "  ___  " \
+                       " / _ \\ " \
+                       "| | | |" \
+                       "| | | |" \
+                       "| |_| |" \
+                       " \\___/ " \
+                      ] \
+                  1 \
+                  [list \
+                       " __ " \
+                       "/_ |" \
+                       " | |" \
+                       " | |" \
+                       " | |" \
+                       " |_|" \
+                      ] \
+                  2 \
+                  [list \
+                       " ___  " \
+                       "|__ \\ " \
+                       "   ) |" \
+                       "  / / " \
+                       " / /_ " \
+                       "|____|" \
+                      ] \
+                  3 \
+                  [list \
+                       " ____  " \
+                       "|___ \\ " \
+                       "  __) |" \
+                       " |__ < " \
+                       " ___) |" \
+                       "|____/ " \
+                      ] \
+                  4 \
+                  [list \
+                       " _  _   " \
+                       "| || |  " \
+                       "| || |_ " \
+                       "|__   _|" \
+                       "   | |  " \
+                       "   |_|  " \
+                      ] \
+                  5 \
+                  [list \
+                       " _____ " \
+                       "| ____|" \
+                       "| |__  " \
+                       "|___ \\ " \
+                       " ___) |" \
+                       "|____/ " \
+                      ] \
+                  6 \
+                  [list \
+                       "   __  " \
+                       "  / /  " \
+                       " / /_  " \
+                       "| '_ \\ " \
+                       "| (_) |" \
+                       " \\___/ " \
+                      ] \
+                  7 \
+                  [list \
+                       " ______ " \
+                       "|____  |" \
+                       "    / / " \
+                       "   / /  " \
+                       "  / /   " \
+                       " /_/    " \
+                      ] \
+                  8 \
+                  [list \
+                       "  ___  " \
+                       " / _ \\ " \
+                       "| (_) |" \
+                       " > _ < " \
+                       "| (_) |" \
+                       " \\___/ " \
+                      ] \
+                  9 \
+                  [list \
+                       "  ___  " \
+                       " / _ \\ " \
+                       "| (_) |" \
+                       " \\__ \ |" \
+                       "   / / " \
+                       "  /_/  " \
+                      ] \
+                  A \
+                  [list \
+                       "          " \
+                       "    /\\    " \
+                       "   /  \\   " \
+                       "  / /\\ \\  " \
+                       " / ____ \\ " \
+                       "/_/    \\_\\" \
+                      ] \
+                  B \
+                  [list \
+                       " ____  " \
+                       "|  _ \\ " \
+                       "| |_) |" \
+                       "|  _ < " \
+                       "| |_) |" \
+                       "|____/ " \
+                      ] \
+                  C \
+                  [list \
+                       "  _____ " \
+                       " / ____|" \
+                       "| |     " \
+                       "| |     " \
+                       "| |____ " \
+                       " \\_____|" \
+                      ] \
+                  D \
+                  [list \
+                       " _____  " \
+                       "|  __ \\ " \
+                       "| |  | |" \
+                       "| |  | |" \
+                       "| |__| |" \
+                       "|_____/ " \
+                      ] \
+                  E \
+                  [list \
+                       " ______ " \
+                       "|  ____|" \
+                       "| |__   " \
+                       "|  __|  " \
+                       "| |____ " \
+                       "|______|" \
+                      ] \
+                  F \
+                  [list \
+                       " ______ " \
+                       "|  ____|" \
+                       "| |__   " \
+                       "|  __|  " \
+                       "| |     " \
+                       "|_|     " \
+                      ] \
+                 ] \
+            ]
 
-    ns_log notice [::util::which convert] \
-        -size ${width}x${height} \
-        -background $background \
-        -fill $fill \
-        label:$text \
-        -splice ${offset}x0+0+0 \
-        -wave ${amplitude}x${wavelength} \
-        -chop   ${offset}x0+0+0 \
-        $path
-    exec [::util::which convert] \
-        -size ${width}x${height} \
-        -background $background \
-        -fill $fill \
-        label:$text \
-        -splice ${offset}x0+0+0 \
-        -wave ${amplitude}x${wavelength} \
-        -chop   ${offset}x0+0+0 \
-        $path
-
-    if {![file exists $path]} {
-        error "File '$destination' was not generated"
+    #
+    # Choose which version of the art we want to use
+    #
+    if {$render_type ni {1 0}} {
+        set render_type [expr {int(round(rand()))}]
     }
-}
 
-ad_proc -private captcha::image::generate__tclgd {
-    -height:required
-    -width:required
-    -text
-    {-background "#ffffff"}
-    {-fill "#000000"}
-    -path:required
-} {
-    Creates a capcha image from a text. This is and implementation
-    using the libgd Tcl wrapper tclgd. Every character in the text
-    will be rotated by a random angle and sprinkled with some noise.
+    #
+    # Compute line-by-line the rendering of the whole string.
+    #
+    set render_size [llength [dict get $ascii_variants $render_type 0]]
 
-    @param height in pixels
-    @param width in pixels
-    @param text the text to use for the captcha. When unspecified, a
-                random text will be used. The text can only contain
-                alphanumeric characters and spaces.
-    @param background the background color, as RGB 6 characters code.
-    @param fill the font color, background the background color, as
-                RGB 6 characters code.
-
-    @see https://flightaware.github.io/tcl.gd/
-} {
-    # Convert the rgb colors
-    for {set i 1} {$i <= 5} {incr i 2} {
-        lappend bg_color [expr 0x[string range $background $i $i+1]]
-        lappend fg_color [expr 0x[string range $fill $i $i+1]]
-    }
-
-    package require tclgd
-
-    set n_chars [string length $text]
-
-    # Make sure there is space for the letters to be rotated without
-    # overlapping with the others.
-    set width [expr {int(max($width, $n_chars * $height * pow(2, -2)))}]
-
-    set font "[acs_root_dir]/packages/captcha/resources/fonts/LiberationSans-Regular.ttf"
-
-    # Rule of thumb to calculate the font size
-    set font_size [expr {($height / 500.0) * 300.0}]
-
-    set tot_width [expr {$width * $n_chars}]
-    GD create captcha $tot_width $height
-
-    set dest_y [expr {$height / 2}]
-
-    # Create the letters and copy them flipped on the captcha. Would
-    # be nice to generate them in place, but rotation expressed in the
-    # text subcommand is not applied to the center.
-    for {set i 0} {$i < $n_chars} {incr i} {
-        set l [string index $text $i]
-
-        GD create letter $width $height
-        set foreground [letter allocate_color {*}$fg_color]
-        set background [letter allocate_color {*}$bg_color]
-        letter fill 0 0 $background
-
-        set bbox [letter text_bounds $foreground $font $font_size 0 0 0 $l]
-        set font_x [expr {abs([lindex $bbox 4] - [lindex $bbox 0])}]
-        set font_y [expr {abs([lindex $bbox 5] - [lindex $bbox 1])}]
-
-        set x [expr {int(($width - $font_x) * 0.5)}]
-        set y [expr {int(($height + $font_y) * 0.5)}]
-        letter text $foreground $font $font_size 0 $x $y $l
-
-        set angle [expr {int(rand() * 360)}]
-        set dest_x [expr {$width * $i + $width / 2}]
-        captcha copy_rotated letter $dest_x $dest_y 0 0 $width $height $angle
-    }
-
-    # Spray some noise on 2% of the image
-    set grey [letter allocate_color 100 100 100 0]
-    set noisy_pixels [expr {int($tot_width * $height * 0.02)}]
-    for {set i 0} {$i < $noisy_pixels} {incr i} {
-        set x [expr {int(rand() * $tot_width)}]
-        set y [expr {int(rand() * $height)}]
-        captcha pixel $x $y $grey
-    }
-
-    set wfd [open $path w]
-    captcha write_png $wfd 1
-    close $wfd
-}
-
-ad_proc -private captcha::backend {} {
-    @return the captcha backend used to generate the image
-} {
-    set backend [::parameter::get_global_value \
-                     -package_key captcha \
-                     -parameter backend \
-                     -default tclgd]
-    if {$backend eq "tclgd"} {
-        try {
-            package require tclgd
-        } on error {errmsg} {
-            ad_log warning \
-                "Cannot load tclgd library:" \
-                $errmsg \
-                "Falling back to convert implementation."
-            set backend "convert"
+    set ascii_art ""
+    for {set i 0} {$i < $render_size} {incr i} {
+        for {set j 0} {$j < [string length $text]} {incr j} {
+            append ascii_art [lindex \
+                                  [dict get $ascii_variants $render_type \
+                                       [string index $text $j] \
+                                      ] \
+                                  $i]
         }
+        append ascii_art \n
     }
 
-    if {$backend eq "convert"} {
-        set convert [::util::which convert]
-        if {$convert eq ""} {
-            error {'tclgd' or 'convert' command not available.}
-        }
-    }
-
-    return $backend
+    return $ascii_art
 }
 
 ad_proc -private captcha::image::generate {
-    {-size 150x50}
-    -text
     {-background "#ffffff"}
     {-fill "#000000"}
 } {
-    Creates a distorted capcha image from a text.
+    Creates a capcha image of random text.
 
-    @param size the size expressed as \{width\}x\{height\} in pixel
-    @param text the text to use for the captcha. When unspecified, a
-                random text will be used. The text can only contain
-                alphanumeric characters and spaces.
     @param background the background color, as RGB 6 characters code.
     @param fill the font color, background the background color, as
                 RGB 6 characters code.
-
-    @return a dict of fields 'path' (path to the image), 'text' (the
-            text the image represents) and checksum (a checksum for
-            the image to use for matching).
 } {
-    set backend [::captcha::backend]
-
-    if {![regexp -nocase {^(\d+)x(\d+)$} $size m width height]} {
-        error {Invalid size}
-    }
     if {![regexp -nocase {^(\#([0-9]|[a-f]){6}){2}$} ${background}${fill}]} {
         error {Invalid color}
     }
-    if {[info exists text]} {
-        if {![regexp {^(\w| )*$} $text]} {
-            error {'text' can only contain alphanumerics and spaces}
+
+    set text [ad_generate_random_string 8]
+    set captcha_text [captcha::image::text_to_ascii_art -text $text]
+
+    set lines [split $captcha_text \n]
+
+    set i 0
+    set max_length 0
+    foreach line $lines {
+        #
+        # First line starts at y=0, while subsequent are "1.2
+        # font-size" below.
+        #
+        set y [expr {$i == 0 ? "y=\"0\"" : "dy=\"1.2em\""}]
+        append svg [subst {
+            <tspan x="0" $y>[ns_quotehtml ${line}]</tspan>
+        }]
+        if {[string length $line] > $max_length} {
+            set max_length [string length $line]
         }
-    } else {
-        set text [ad_generate_random_string 5]
+        incr i
     }
 
-    set path [ad_tmpnam].png
+    #
+    # Empirical formula to compute the optimal length, found to work
+    # in practice.
+    #
+    set svg_width [expr {round((36.0 / 60.0) * $max_length)}]
 
-    captcha::image::generate__$backend \
-        -height $height \
-        -width $width \
-        -text $text \
-        -background $background \
-        -fill $fill \
-        -path $path
+    set n_lines [llength $lines]
+
+    set svg [subst -nocommands {
+        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        <svg width="${svg_width}em" height="${n_lines}em"
+             style="font-family: monospace">
+           <rect x="0" y="0" width="100%" height="100%" fill="$background"/>
+           <text xml:space="preserve" x="50%" y="50%" stroke="$fill">$svg</text>
+        </svg>
+    }]
+
+    set wfd [ad_opentmpfile path .svg]
+    puts -nonewline $wfd [string trim $svg]
+    close $wfd
 
     set checksum [ns_md file -digest sha1 $path]
 
@@ -258,27 +407,19 @@ ad_proc -public template::widget::captcha {
     } else {
         set fill #000000
     }
-    if {[info exists element(size)]} {
-        set size $element(size)
-    } else {
-        set size 150x50
-    }
 
     set captcha [captcha::image::generate \
                      -background $background \
-                     -fill $fill \
-                     -size $size]
+                     -fill $fill]
 
     set checksum [dict get $captcha checksum]
     set text [dict get $captcha text]
 
-    # The capcha image we are injecting directly into the page as
-    # base64 to not clutter the filesystem and mess around with
-    # request processor.
+    # The capcha image we are injecting directly into the page to not
+    # clutter the filesystem and mess around with request processor.
     set captcha_path [dict get $captcha path]
     set rfd [open $captcha_path r]
-    fconfigure $rfd -translation binary
-    set base64image [ns_base64encode -- [read $rfd]]
+    set svg [read $rfd]
     ::file delete -- $captcha_path
     close $rfd
 
@@ -312,7 +453,7 @@ ad_proc -public template::widget::captcha {
                id="$captcha_checksum_id"
                name="$captcha_checksum_id"
                value="$checksum">
-        <div><img style="width:100%" src="data:image/png;base64,$base64image"></div>
+        <div>$svg</div>
         <div>[input text element $tag_attributes]</div>
     }]
 }

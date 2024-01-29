@@ -63,7 +63,7 @@ aa_register_case -cats {
         }
 
         set widget [template::widget::captcha element {}]
-        aa_true "Widget is HTML" {[string first "<img" $widget] >= 0}
+        aa_true "Widget is HTML" {[string first "<svg" $widget] >= 0}
 
         aa_true "Checksum was created" \
             [db_string count {select count(*) from template_widget_captchas}]
@@ -150,13 +150,35 @@ aa_register_case -cats {
         1024x768
         1280x960
     } {
-        set text [ad_generate_random_string 5]
-        set captcha [captcha::image::generate \
-                         -size $size \
-                         -text $text]
+        set elapsed [time {
+            set captcha [captcha::image::generate]
+        }]
+
+        #
+        # Generating a captcha should be faster than 10ms.
+        #
+        # Note that this requirement may already be generous.
+        #
+        set acceptable_elapsed [expr {10 * 1000}]
+        aa_true "Generating the captcha was fast enough ($elapsed)" {
+            [lindex $elapsed 0] < $acceptable_elapsed
+        }
+
+        set text [dict get $captcha text]
+
+        #
+        # It may be unfair to test tesseract on the raw svg. We try
+        # various rescalings in png format.
+        #
+        close [ad_opentmpfile png_path .png]
+        ::exec [::util::which convert] \
+            -size $size \
+            [dict get $captcha path] \
+            $png_path
+
         set ocr ""
         try {
-            set ocr [exec -ignorestderr -- $tesseract [dict get $captcha path] -]
+            set ocr [exec -ignorestderr -- $tesseract $png_path -]
         } on error {errmsg} {
             aa_log "Tesseract failed on '[dict get $captcha path]'"
         }
