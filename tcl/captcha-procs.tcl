@@ -337,6 +337,10 @@ ad_proc -private captcha::image::generate {
         # font-size" below.
         #
 
+        if {[string length $line] > $max_length} {
+            set max_length [string length $line]
+        }
+
         set line [ns_quotehtml ${line}]
         #
         # Safari also needs spaces to be quoted. Other browsers or
@@ -347,18 +351,14 @@ ad_proc -private captcha::image::generate {
         append svg [subst {
             <tspan x="0" $y>$line</tspan>
         }]
-        if {[string length $line] > $max_length} {
-            set max_length [string length $line]
-        }
         incr i
     }
 
     #
-    # Empirical formula to compute the optimal length, found to work
-    # in practice.
+    # Empirical formula to compute the optimal viewBox size, found to
+    # work in practice.
     #
-    set svg_width [expr {4 * $max_length}]
-
+    set svg_width [expr {11 * $max_length}]
     set svg_height [expr {15 * [llength $lines]}]
 
     set svg [subst -nocommands {
