@@ -336,9 +336,16 @@ ad_proc -private captcha::image::generate {
         # First line starts at y=0, while subsequent are "1.2
         # font-size" below.
         #
+
+        set line [ns_quotehtml ${line}]
+        #
+        # Safari also needs spaces to be quoted. Other browsers or
+        # software like Inkscape do not seem to mind...
+        #
+        regsub -all { } $line {\&nbsp;} line
         set y [expr {$i == 0 ? "y=\"0\"" : "dy=\"1.2em\""}]
         append svg [subst {
-            <tspan x="0" $y>[ns_quotehtml ${line}]</tspan>
+            <tspan x="0" $y>$line</tspan>
         }]
         if {[string length $line] > $max_length} {
             set max_length [string length $line]
@@ -350,7 +357,7 @@ ad_proc -private captcha::image::generate {
     # Empirical formula to compute the optimal length, found to work
     # in practice.
     #
-    set svg_width [expr {11 * $max_length}]
+    set svg_width [expr {4 * $max_length}]
 
     set svg_height [expr {15 * [llength $lines]}]
 
@@ -453,7 +460,7 @@ ad_proc -public template::widget::captcha {
                id="$captcha_checksum_id"
                name="$captcha_checksum_id"
                value="$checksum">
-        <div width="100%">$svg</div>
+        <div>$svg</div>
         <div>[input text element $tag_attributes]</div>
     }]
 }
