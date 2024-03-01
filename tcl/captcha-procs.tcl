@@ -350,13 +350,13 @@ ad_proc -private captcha::image::generate {
     # Empirical formula to compute the optimal length, found to work
     # in practice.
     #
-    set svg_width [expr {round((36.0 / 60.0) * $max_length)}]
+    set svg_width [expr {11 * $max_length}]
 
-    set n_lines [llength $lines]
+    set svg_height [expr {15 * [llength $lines]}]
 
     set svg [subst -nocommands {
         <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-        <svg width="${svg_width}em" height="${n_lines}em"
+        <svg viewBox="0 0 ${svg_width} ${svg_height}"
              style="font-family: monospace">
            <rect x="0" y="0" width="100%" height="100%" fill="$background"/>
            <text xml:space="preserve" x="50%" y="50%" stroke="$fill">$svg</text>
@@ -453,7 +453,7 @@ ad_proc -public template::widget::captcha {
                id="$captcha_checksum_id"
                name="$captcha_checksum_id"
                value="$checksum">
-        <div>$svg</div>
+        <div width="100%">$svg</div>
         <div>[input text element $tag_attributes]</div>
     }]
 }
