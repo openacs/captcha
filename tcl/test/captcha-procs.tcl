@@ -167,13 +167,27 @@ aa_register_case -cats {
         set text [dict get $captcha text]
 
         #
+        # We introduce the space entity for Safari, but convert will
+        # not like it, so now we clean it up...
+        #
+        set svg_path [dict get $captcha path]
+        set rfd [open $svg_path r]
+        set svg [read $rfd]
+        close $rfd
+        regsub -all {\&nbsp;} $svg { } svg
+        set wfd [open $svg_path w]
+        puts $wfd $svg
+        close $wfd
+        ##
+
+        #
         # It may be unfair to test tesseract on the raw svg. We try
         # various rescalings in png format.
         #
         close [ad_opentmpfile png_path .png]
         ::exec [::util::which convert] \
             -size $size \
-            [dict get $captcha path] \
+            $svg_path \
             $png_path
 
         set ocr ""
