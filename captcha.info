@@ -9,7 +9,7 @@
     <implements-subsite-p>f</implements-subsite-p>
     <inherit-templates-p>f</inherit-templates-p>
 
-    <version name="1.0.0" url="http://openacs.org/repository/download/apm/captcha-1.0.0apm">
+    <version name="1.0.1" url="http://openacs.org/repository/download/apm/captcha-1.0.1apm">
         <owner url="mailto:antonio@elettrotecnica.it">Antonio Pisano</owner>
         <summary>A captcha implementation for the template system</summary>
         <release-date>2024-01-29</release-date>
@@ -21,9 +21,9 @@
           https://fossil-scm.org/ and the ASCII art itself was taken
           directly from there.
         </description>
-        <maturity>0</maturity>
+        <maturity>1</maturity>
 
-        <provides url="captcha" version="1.0.0"/>
+        <provides url="captcha" version="1.0.1"/>
         <requires url="acs-templating" version="5.10.1b1"/>
 
         <callbacks>
