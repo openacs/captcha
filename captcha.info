@@ -12,7 +12,7 @@
     <version name="1.0.1" url="http://openacs.org/repository/download/apm/captcha-1.0.1apm">
         <owner url="mailto:antonio@elettrotecnica.it">Antonio Pisano</owner>
         <summary>A captcha implementation for the template system</summary>
-        <release-date>2024-01-29</release-date>
+        <release-date>2024-09-02</release-date>
         <vendor>WU Vienna</vendor>
         <description format="text/html">
           This captcha is implemented by generating a random string,
@@ -24,7 +24,7 @@
         <maturity>1</maturity>
 
         <provides url="captcha" version="1.0.1"/>
-        <requires url="acs-templating" version="5.10.1b1"/>
+        <requires url="acs-templating" version="5.10.1"/>
 
         <callbacks>
         </callbacks>
